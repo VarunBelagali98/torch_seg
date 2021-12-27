@@ -6,18 +6,27 @@ from dataloader import load_data
 from torch.utils import data as data_utils
 from tqdm import tqdm
 from torchsummary import summary
+import argparse
 
 use_cuda = torch.cuda.is_available()
 
-loss_fun = torch.nn.BCELoss()
+parser = argparse.ArgumentParser(description='Code to train model')
 
-def dice_loss(output, target):
-	smooth = 1.
-	y_true_f = torch.reshape(target, (-1,))
-	y_pred_f = torch.reshape(output, (-1,))
-	intersection = torch.sum(y_true_f * y_pred_f)
-	score = (2. * intersection + smooth) / (torch.sum(y_true_f) + torch.sum(y_pred_f) + smooth)
-	return (1-score)
+parser.add_argument("--fold", help="fold index [1-5]", required=True, type=int)
+
+parser.add_argument("--batch_size", help="batch size", default=32, type=int)
+
+parser.add_argument('--root_data', help='data folder path', default="../training/training/training/", type=str)
+
+parser.add_argument('--fold_files', help='data folder path', default="../fold_files/annfiles_fold", type=str)
+
+parser.add_argument("--per", help="Percentage of data to be used", default=None, type=float)
+
+parser.add_argument("--weight_root", help="weight folder", default="/content//gdrive/MyDrive/colab-data/weights/", type=str)
+
+parser.add_argument("--model_name", help="name of the weight file", required=True, type=str)
+
+args = parser.parse_args()
 
 def train(device, model, trainloader, valloader, optimizer, nepochs, WEIGTH_PATH):
 	train_losses = []        
@@ -81,14 +90,16 @@ def validate(val_data_loader, epoch, device, model):
 
 
 if __name__ == "__main__":
-	fold = 1
-	per = None
+	fold = args.fold
+	per = args.per
 	seed_select = None
-	model_name = "torch1"
-	batch_size = 4
-	TRAINING_PATH = '../../../training/training/'
-	FOLD_PATH = '../../Data_files/fold_files/annfiles_fold'
-	WEIGTH_PATH = model_name + ".pth"
+	model_name = args.model_name
+	batch_size = args.batch_size
+	TRAINING_PATH = args.root_data
+	FOLD_PATH = args.fold_files
+	ROOT_WEIGHTPATH = args.weight_root
+	
+	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
 	train_dataset = load_data(fold, 0, per, seed_select=seed_select, TRAINING_PATH=TRAINING_PATH, FOLD_PATH=FOLD_PATH)
