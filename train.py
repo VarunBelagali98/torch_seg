@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(description='Code to train model')
 
 parser.add_argument("--fold", help="fold index [1-5]", required=True, type=int)
 
-parser.add_argument("--batch_size", help="batch size", default=32, type=int)
+parser.add_argument("--batch_size", help="batch size", default=16, type=int)
 
 parser.add_argument('--root_data', help='data folder path', default="../training/training/training/", type=str)
 
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 	summary(model, (1, 224, 224))
 	print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
-	optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.999))
+	optimizer = torch.optim.Adam(model.parameters())
 
 	# Train!
 	train(device, model, train_data_loader, val_data_loader, optimizer, nepochs=10, WEIGTH_PATH=WEIGTH_PATH)
