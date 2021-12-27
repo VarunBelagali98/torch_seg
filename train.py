@@ -37,6 +37,7 @@ def train(device, model, trainloader, valloader, optimizer, nepochs, WEIGTH_PATH
 		print("Epoch {} training".format(epoch))
 		prog_bar = tqdm(enumerate(train_data_loader))
 		for step, data in prog_bar:
+			model.train()
 			# get the inputs; data is a list of [inputs, labels]
 			inputs, gt = data[0], data[1]
 			inputs = inputs.to(device)
