@@ -18,7 +18,7 @@ parser.add_argument("--batch_size", help="batch size", default=16, type=int)
 
 parser.add_argument('--root_data', help='data folder path', default="../training/training/training/", type=str)
 
-parser.add_argument('--fold_files', help='data folder path', default="../fold_files/annfiles_fold", type=str)
+parser.add_argument('--fold_files', help='fold files path', default="../fold_files/annfiles_fold", type=str)
 
 parser.add_argument("--per", help="Percentage of data to be used", default=None, type=float)
 
@@ -31,6 +31,8 @@ args = parser.parse_args()
 def train(device, model, trainloader, valloader, optimizer, nepochs, WEIGTH_PATH):
 	train_losses = []        
 	val_losses = []
+	min_val_loss = 1000
+	early_stop_count = 0
 	print("")
 	for epoch in range(nepochs):  # loop over the dataset multiple times
 		running_loss = 0.0
@@ -53,20 +55,26 @@ def train(device, model, trainloader, valloader, optimizer, nepochs, WEIGTH_PATH
 			optimizer.step()
 
 			# print statistics
-			running_loss = running_loss + loss.item()
-			prog_bar.set_description('Dice loss: {}'.format(running_loss / (step + 1)))
+			running_loss = ((running_loss * step) + loss.item())/(step+1)
+			prog_bar.set_description('Dice loss: {:.4f}'.format(running_loss))
 		
 		train_losses.append(running_loss)
 		val_loss = validate(val_data_loader, epoch, device, model)
 		val_losses.append(val_loss)
-		save_check = True
-
-		if save_check == True:
+		
+		if val_loss < min_val_loss:
+			early_stop_count = 0
 			torch.save(model.state_dict(), WEIGTH_PATH)
+			print("Saving weights: val loss improved from {:.4f} to {:.4f}", min_val_loss, val_loss)
+			min_val_loss = val_loss
+		else:
+			early_stop_count = early_stop_count + 1
+
+		if early_stop_count >= 5:
+			print(' Training complete due to early stopping')
+		
 		print("")
 
-
-	print(' Training complete')
 
 def validate(val_data_loader, epoch, device, model):
 	running_loss = 0
@@ -82,12 +90,12 @@ def validate(val_data_loader, epoch, device, model):
 		
 		model.eval()
 		val_loss = model.dice_loss(inputs, gt)
-		running_loss = running_loss + val_loss.item()
+		running_loss = ((running_loss * step) + val_loss.item())/(step+1)
 		
-		prog_bar.set_description('Val Dice loss: {}'.format(running_loss / (step + 1)))
+		prog_bar.set_description('Val Dice loss: {:.4f}'.format(running_loss))
 		
 		loss_list.append(val_loss.item())
-	return sum(loss_list)/len(loss_list)
+	return running_loss
 
 
 if __name__ == "__main__":
@@ -122,4 +130,4 @@ if __name__ == "__main__":
 	optimizer = torch.optim.Adam(model.parameters())
 
 	# Train!
-	train(device, model, train_data_loader, val_data_loader, optimizer, nepochs=10, WEIGTH_PATH=WEIGTH_PATH)
+	train(device, model, train_data_loader, val_data_loader, optimizer, nepochs=25, WEIGTH_PATH=WEIGTH_PATH)
