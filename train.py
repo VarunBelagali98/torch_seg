@@ -65,13 +65,14 @@ def train(device, model, trainloader, valloader, optimizer, nepochs, WEIGTH_PATH
 		if val_loss < min_val_loss:
 			early_stop_count = 0
 			torch.save(model.state_dict(), WEIGTH_PATH)
-			print("Saving weights: val loss improved from {:.4f} to {:.4f}", min_val_loss, val_loss)
+			print("Saving weights: val loss improved from %.4f to %.4f" % (min_val_loss, val_loss))
 			min_val_loss = val_loss
 		else:
 			early_stop_count = early_stop_count + 1
 
 		if early_stop_count >= 5:
 			print(' Training complete due to early stopping')
+			break
 		
 		print("")
 
@@ -115,7 +116,7 @@ if __name__ == "__main__":
 	val_dataset = load_data(fold, 1, per, seed_select=seed_select, TRAINING_PATH=TRAINING_PATH, FOLD_PATH=FOLD_PATH)
 
 	train_data_loader = data_utils.DataLoader(
-		train_dataset, batch_size=batch_size, shuffle=False)
+		train_dataset, batch_size=batch_size, shuffle=True)
 
 	val_data_loader = data_utils.DataLoader(
 		val_dataset, batch_size=batch_size)
