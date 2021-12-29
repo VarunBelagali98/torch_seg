@@ -7,6 +7,9 @@ from torch.utils import data as data_utils
 from tqdm import tqdm
 from torchsummary import summary
 import argparse
+import numpy as np 
+import cv2
+import os
 
 use_cuda = torch.cuda.is_available()
 
@@ -41,9 +44,41 @@ def test(test_data_loader, device, model):
 
 		dices = model.dice_score(inputs, gt)
 		dice_list.extend(dices)
-		prog_bar.set_description('Val Dice loss: {:.4f}'.format(sum(dice_list)/len(dice_list)))
+		prog_bar.set_description('Test Dice loss: {:.4f}'.format(sum(dice_list)/len(dice_list)))
 
 	return dice_list
+
+def save_samples(test_data_loader, device, model):
+	prog_bar = tqdm(enumerate(test_data_loader))
+	dice_list = []
+	count = 0
+	if os.path.exists('./samples/'):
+		os.mkdir('./samples')
+
+	model.eval()
+
+	for step, data in prog_bar:
+		# Move data to CUDA device
+		inputs, gt = data[0], data[1]
+		inputs = inputs.to(device)
+
+		pred = model.forward(inputs)
+
+		inputs = inputs.cpu().numpy()
+		pred = pred.cpu().numpy()
+		pred = pred > 0.5
+		pred = pred.astype(int)
+
+		for i in range(inputs.shape[0]):
+			img = inputs[i, 0, :, :] * 255
+			img = img.astype(int)
+			seg = pred[i, 0, :, :] * 255
+			cv2.imwrite('./samples/'+count+".png", img)
+			cv2.imwrite('./samples/'+count+"._seg.png", seg)
+			count = count + 1
+		
+		if count > 50:
+			return
 
 if __name__ == "__main__":
 	fold = args.fold
@@ -72,3 +107,6 @@ if __name__ == "__main__":
 
 	# Test!
 	test(test_data_loader, device, model)
+
+	# Save samples
+	save_samples(test_data_loader, device, model)
