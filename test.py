@@ -64,8 +64,8 @@ def save_samples(test_data_loader, device, model):
 
 		pred = model.forward(inputs)
 
-		inputs = inputs.cpu().numpy()
-		pred = pred.cpu().numpy()
+		inputs = inputs.cpu().detach().numpy()
+		pred = pred.cpu().detach().numpy()
 		pred = pred > 0.5
 		pred = pred.astype(int)
 
