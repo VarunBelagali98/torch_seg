@@ -73,8 +73,8 @@ def save_samples(test_data_loader, device, model):
 			img = inputs[i, 0, :, :] * 255
 			img = img.astype(int)
 			seg = pred[i, 0, :, :] * 255
-			cv2.imwrite('./samples/'+count+".png", img)
-			cv2.imwrite('./samples/'+count+"._seg.png", seg)
+			cv2.imwrite('./samples/'+str(count)+".png", img)
+			cv2.imwrite('./samples/'+str(count)+"._seg.png", seg)
 			count = count + 1
 		
 		if count > 50:
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 	model.load_state_dict(torch.load(WEIGTH_PATH))
 
 	# Test!
-	test(test_data_loader, device, model)
+	#test(test_data_loader, device, model)
 
 	# Save samples
 	save_samples(test_data_loader, device, model)
