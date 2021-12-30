@@ -52,7 +52,7 @@ def save_samples(test_data_loader, device, model):
 	prog_bar = tqdm(enumerate(test_data_loader))
 	dice_list = []
 	count = 0
-	if os.path.exists('./samples/'):
+	if not os.path.exists('./samples/'):
 		os.mkdir('./samples')
 
 	model.eval()
