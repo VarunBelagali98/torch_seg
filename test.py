@@ -25,6 +25,8 @@ parser.add_argument('--fold_files', help='fold files path', default="../fold_fil
 
 parser.add_argument("--weight_root", help="weight folder", default="/content//gdrive/MyDrive/colab-data/weights/", type=str)
 
+parser.add_argument("--eval_root", help="results folder", default="/content//gdrive/MyDrive/colab-data/Dice/", type=str)
+
 parser.add_argument("--model_name", help="name of the weight file", required=True, type=str)
 
 args = parser.parse_args()
@@ -50,7 +52,6 @@ def test(test_data_loader, device, model):
 
 def save_samples(test_data_loader, device, model):
 	prog_bar = tqdm(enumerate(test_data_loader))
-	dice_list = []
 	count = 0
 	if not os.path.exists('./samples/'):
 		os.mkdir('./samples')
@@ -74,10 +75,10 @@ def save_samples(test_data_loader, device, model):
 			img = img.astype(int)
 			seg = pred[i, 0, :, :] * 255
 			cv2.imwrite('./samples/'+str(count)+".png", img)
-			cv2.imwrite('./samples/'+str(count)+"._seg.png", seg)
+			cv2.imwrite('./samples/'+str(count)+"_seg.png", seg)
 			count = count + 1
 		
-		if count > 50:
+		if count > 100:
 			return
 
 if __name__ == "__main__":
@@ -87,7 +88,7 @@ if __name__ == "__main__":
 	TRAINING_PATH = args.root_data
 	FOLD_PATH = args.fold_files
 	ROOT_WEIGHTPATH = args.weight_root
-	
+	EVAL_PATH = args.eval_root
 	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
@@ -106,7 +107,10 @@ if __name__ == "__main__":
 	model.load_state_dict(torch.load(WEIGTH_PATH))
 
 	# Test!
-	#test(test_data_loader, device, model)
+	res = test(test_data_loader, device, model)
+	with open(EVAL_PATH+ model_name +'_test_dice.txt', 'w') as f_test:
+		for item in res:
+			f_test.write("%s\n" % item)
 
 	# Save samples
 	save_samples(test_data_loader, device, model)
