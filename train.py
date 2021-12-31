@@ -1,12 +1,12 @@
 import torch
 import torchvision
-from models.unet import UNet
 import torch.optim as optim
 from dataloader import load_data
 from torch.utils import data as data_utils
 from tqdm import tqdm
 from torchsummary import summary
 import argparse
+from models.ResUnet import ResUNet
 
 use_cuda = torch.cuda.is_available()
 
@@ -124,11 +124,11 @@ if __name__ == "__main__":
 	device = torch.device("cuda" if use_cuda else "cpu")
 
 	# Model
-	model = UNet().to(device)
+	model = ResUNet().to(device)
 	summary(model, (1, 224, 224))
 	print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
 	optimizer = torch.optim.Adam(model.parameters())
 
 	# Train!
-	train(device, model, train_data_loader, val_data_loader, optimizer, nepochs=25, WEIGTH_PATH=WEIGTH_PATH)
+	train(device, model, train_data_loader, val_data_loader, optimizer, nepochs=100, WEIGTH_PATH=WEIGTH_PATH)

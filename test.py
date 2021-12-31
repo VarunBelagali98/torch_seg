@@ -1,6 +1,5 @@
 import torch
 import torchvision
-from models.unet import UNet
 import torch.optim as optim
 from dataloader import load_data
 from torch.utils import data as data_utils
@@ -10,6 +9,7 @@ import argparse
 import numpy as np 
 import cv2
 import os
+from models.ResUnet import ResUNet
 
 use_cuda = torch.cuda.is_available()
 
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 	device = torch.device("cuda" if use_cuda else "cpu")
 
 	# Model
-	model = UNet().to(device)
+	model = ResUNet().to(device)
 	summary(model, (1, 224, 224))
 
 	# Load weights
