@@ -17,35 +17,35 @@ class ResUNet(nn.Module):
 			Conv2d(64, 128, kernel_size=3),
 			Conv2d(128, 128, kernel_size=3, residual=True),),
 
-			nn.Sequential(nn.MaxPool2d(2, stride=2),
-			Conv2d(128, 256, kernel_size=3),
-			Conv2d(256, 256, kernel_size=3, residual=True)),
+			#nn.Sequential(nn.MaxPool2d(2, stride=2),
+			#Conv2d(128, 256, kernel_size=3),
+			#Conv2d(256, 256, kernel_size=3, residual=True)),
+
+			#nn.Sequential(nn.MaxPool2d(2, stride=2),
+			#Conv2d(256, 512, kernel_size=3),
+			#Conv2d(512, 512, kernel_size=3, residual=True)),
 
 			nn.Sequential(nn.MaxPool2d(2, stride=2),
-			Conv2d(256, 512, kernel_size=3),
-			Conv2d(512, 512, kernel_size=3, residual=True)),
-
-			nn.Sequential(nn.MaxPool2d(2, stride=2),
-			Conv2d(512, 1024, kernel_size=3)),
+			Conv2d(128, 256, kernel_size=3)),
 		])
 
 
 		self.decoder_blocks = nn.ModuleList([
-			nn.Sequential(Conv2d(1024, 512, kernel_size=3),
+			nn.Sequential(Conv2d(256, 128, kernel_size=3),
 			nn.Upsample( scale_factor=(2,2))
 			),
 
-			nn.Sequential(Conv2d(1024, 512, kernel_size=3),
-            Conv2d(512, 512, kernel_size=3, residual=True),
-			Conv2d(512, 256, kernel_size=3),
-			nn.Upsample(scale_factor=(2,2))
-			),
+			#nn.Sequential(Conv2d(1024, 512, kernel_size=3),
+            #Conv2d(512, 512, kernel_size=3, residual=True),
+			#Conv2d(512, 256, kernel_size=3),
+			#nn.Upsample(scale_factor=(2,2))
+			#),
 
-			nn.Sequential(Conv2d(512, 256, kernel_size=3),
-            Conv2d(256, 256, kernel_size=3, residual=True),
-			Conv2d(256, 128, kernel_size=3),
-			nn.Upsample(scale_factor=(2,2))#, scale_factor=(2,2))
-			),
+			#nn.Sequential(Conv2d(512, 256, kernel_size=3),
+            #Conv2d(256, 256, kernel_size=3, residual=True),
+			#Conv2d(256, 128, kernel_size=3),
+			#nn.Upsample(scale_factor=(2,2))#, scale_factor=(2,2))
+			#),
 
 			nn.Sequential(Conv2d(256, 128, kernel_size=3),
             Conv2d(128, 128, kernel_size=3, residual=True),
