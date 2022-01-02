@@ -92,7 +92,7 @@ if __name__ == "__main__":
 	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
-	test_dataset = load_data(fold, 2, TRAINING_PATH=TRAINING_PATH, FOLD_PATH=FOLD_PATH)
+	test_dataset = load_data(fold, 1, TRAINING_PATH=TRAINING_PATH, FOLD_PATH=FOLD_PATH)
 
 	test_data_loader = data_utils.DataLoader(
 		test_dataset, batch_size=batch_size)
