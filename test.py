@@ -64,7 +64,7 @@ def save_samples(test_data_loader, device, model):
 		inputs, gt = data[0], data[1]
 		inputs = inputs.to(device)
 
-		pred = model.forward(inputs)
+		pred = model.forward(inputs)[2]
 
 		inputs = inputs.cpu().detach().numpy()
 		pred = pred.cpu().detach().numpy()
@@ -105,7 +105,7 @@ if __name__ == "__main__":
 	summary(model, (1, 224, 224))
 
 	# Load weights
-	#model.load_state_dict(torch.load(WEIGTH_PATH))
+	model.load_state_dict(torch.load(WEIGTH_PATH))
 
 	# Test!
 	res = test(test_data_loader, device, model)

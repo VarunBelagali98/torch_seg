@@ -26,6 +26,8 @@ parser.add_argument("--weight_root", help="weight folder", default="/content//gd
 
 parser.add_argument("--model_name", help="name of the weight file", required=True, type=str)
 
+parser.add_argument("--checkpoint", help="name of the checkpoint file", default="", type=str)
+
 args = parser.parse_args()
 
 def train(device, model, trainloader, valloader, optimizer, nepochs, WEIGTH_PATH):
@@ -131,6 +133,10 @@ if __name__ == "__main__":
 	print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
 	optimizer = torch.optim.Adam(model.parameters())
+
+	# Load weights
+	if args.checkpoint != "":
+		model.load_state_dict(torch.load(ROOT_WEIGHTPATH + args.checkpoint + ".pth"))
 
 	# Train!
 	train(device, model, train_data_loader, val_data_loader, optimizer, nepochs=100, WEIGTH_PATH=WEIGTH_PATH)

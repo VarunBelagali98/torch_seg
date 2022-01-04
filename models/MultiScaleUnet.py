@@ -112,9 +112,9 @@ class MultiScaleUnet(nn.Module):
 
 	def dice_loss(self, X, Y):
 		pred = self.forward(X)
-		loss = self.cal_dice_loss(pred[0], Y[0])
-		for i in range(1, len(pred)):
-			loss = loss + self.cal_dice_loss(pred[i], Y[i])
+		loss = self.cal_dice_loss(pred[2], Y[2])
+		#for i in range(1, len(pred)):
+		#	loss = loss + self.cal_dice_loss(pred[i], Y[i])
 		return loss
 
 
