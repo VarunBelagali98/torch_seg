@@ -9,7 +9,7 @@ import argparse
 import numpy as np 
 import cv2
 import os
-from models.ResUnet import ResUNet
+from models.MultiScaleUnet import MultiScaleUnet
 
 use_cuda = torch.cuda.is_available()
 
@@ -42,7 +42,8 @@ def test(test_data_loader, device, model):
 		# Move data to CUDA device
 		inputs, gt = data[0], data[1]
 		inputs = inputs.to(device)
-		gt = gt.to(device)
+		#gt = gt.to(device)
+		gt = [x.to(device) for x in gt]
 
 		dices = model.dice_score(inputs, gt)
 		dice_list.extend(dices)
@@ -92,7 +93,7 @@ if __name__ == "__main__":
 	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
-	test_dataset = load_data(fold, 0, TRAINING_PATH=TRAINING_PATH, FOLD_PATH=FOLD_PATH)
+	test_dataset = load_data(fold, 2, TRAINING_PATH=TRAINING_PATH, FOLD_PATH=FOLD_PATH)
 
 	test_data_loader = data_utils.DataLoader(
 		test_dataset, batch_size=batch_size)
@@ -100,11 +101,11 @@ if __name__ == "__main__":
 	device = torch.device("cuda" if use_cuda else "cpu")
 
 	# Model
-	model = ResUNet().to(device)
+	model = MultiScaleUnet().to(device)
 	summary(model, (1, 224, 224))
 
 	# Load weights
-	model.load_state_dict(torch.load(WEIGTH_PATH))
+	#model.load_state_dict(torch.load(WEIGTH_PATH))
 
 	# Test!
 	res = test(test_data_loader, device, model)

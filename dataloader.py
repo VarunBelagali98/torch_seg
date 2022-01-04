@@ -34,40 +34,26 @@ class load_data(torch.utils.data.Dataset):
 
 		fname = self.TRAINING_PATH + str(self.datalist[idx]) + '_seg.png'
 		img_g = cv2.imread(fname)
-		img_g = cv2.resize(img_g, ( s , s )) 
-			
-		im = img_g[:,:,0]/255
-		xaxis = np.sum(im,axis=0)
-		yaxis = np.sum(im,axis=1)
-		xs = np.nonzero(xaxis)[0]
-		ys = np.nonzero(yaxis)[0]
-
-		negative_mask = np.ones((s, s, 1))
-		positive_mask = np.zeros((s, s, 1))
-
-		if ((len(xs)<1) or (len(ys)<1)):
-			x0,x1,y0,y1 = 0,0,0,0
-		else:
-			x0 = xs[0]
-			x1 = xs[-1]
-			y0 = ys[0]
-			y1 = ys[-1]
-	
-			positive_mask[y0:y1+1, x0:x1+1, :] = 1
-			negative_mask[y0:y1+1, x0:x1+1, :] = 0
+		img_g1 = cv2.resize(img_g, ( s , s )) 
+		img_g2 = cv2.resize(img_g, ( int(s/2) , int(s/2) )) 
+		img_g3 = cv2.resize(img_g, ( int(s/4) , int(s/4) )) 
 			
 		img =img_in[:,:,np.newaxis]/255.0
-		#pos = positive_mask[:,:,:]
-		#neg = negative_mask[:,:,:]
-		img_ann = img_g[:,:,1,np.newaxis]/255.0
+		img_ann1 = img_g1[:,:,1,np.newaxis]/255.0
+		img_ann2 = img_g2[:,:,1,np.newaxis]/255.0
+		img_ann3 = img_g3[:,:,1,np.newaxis]/255.0
 
 		img = np.transpose(img, (2, 0, 1))
-		img_ann = np.transpose(img_ann, (2, 0, 1))
+		img_ann1 = np.transpose(img_ann1, (2, 0, 1))
+		img_ann2 = np.transpose(img_ann2, (2, 0, 1))
+		img_ann3 = np.transpose(img_ann3, (2, 0, 1))
 
 		img = torch.FloatTensor(img)
-		img_ann = torch.FloatTensor(img_ann)
+		img_ann1 = torch.FloatTensor(img_ann1)
+		img_ann2 = torch.FloatTensor(img_ann2)
+		img_ann3 = torch.FloatTensor(img_ann3)
 
-		return (img, img_ann)
+		return (img, [img_ann3, img_ann2, img_ann1])
 
 	def get_files(self, fold,state,per=None, seed_select=None):
 		random.seed(0)

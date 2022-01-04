@@ -6,7 +6,7 @@ from torch.utils import data as data_utils
 from tqdm import tqdm
 from torchsummary import summary
 import argparse
-from models.ResUnet import ResUNet
+from models.MultiScaleUnet import MultiScaleUnet
 
 use_cuda = torch.cuda.is_available()
 
@@ -43,7 +43,8 @@ def train(device, model, trainloader, valloader, optimizer, nepochs, WEIGTH_PATH
 			# get the inputs; data is a list of [inputs, labels]
 			inputs, gt = data[0], data[1]
 			inputs = inputs.to(device)
-			gt = gt.to(device)
+			#gt = gt.to(device)
+			gt = [x.to(device) for x in gt]
 
 			# zero the parameter gradients
 			optimizer.zero_grad()
@@ -87,7 +88,8 @@ def validate(val_data_loader, epoch, device, model):
 		# Move data to CUDA device
 		inputs, gt = data[0], data[1]
 		inputs = inputs.to(device)
-		gt = gt.to(device)
+		#gt = gt.to(device)
+		gt = [x.to(device) for x in gt]
 		
 		model.eval()
 		val_loss = model.dice_loss(inputs, gt)
@@ -124,7 +126,7 @@ if __name__ == "__main__":
 	device = torch.device("cuda" if use_cuda else "cpu")
 
 	# Model
-	model = ResUNet().to(device)
+	model = MultiScaleUnet().to(device)
 	summary(model, (1, 224, 224))
 	print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
