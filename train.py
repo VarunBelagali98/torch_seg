@@ -99,7 +99,6 @@ if __name__ == "__main__":
 	model_name = args.model_name
 	batch_size = args.batch_size
 	TRAINING_PATH = args.root_data
-	FOLD_PATH = args.fold_files
 	ROOT_WEIGHTPATH = args.weight_root
 	image_path = args.image_path
 	
