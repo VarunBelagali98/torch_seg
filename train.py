@@ -18,7 +18,7 @@ parser.add_argument("--batch_size", help="batch size", default=16, type=int)
 
 parser.add_argument('--root_data', help='data folder path', default="../training/training/training/", type=str)
 
-parser.add_argument("--weight_root", help="weight folder", default="/content//gdrive/MyDrive/colab-data/weights/", type=str)
+parser.add_argument("--weight_root", help="weight folder", default="/content//gdrive/MyDrive/G/save/", type=str)
 
 parser.add_argument("--model_name", help="name of the weight file", required=True, type=str)
 
