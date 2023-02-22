@@ -27,6 +27,7 @@ class load_data(torch.utils.data.Dataset):
 		
 		#random.shuffle(images_indx)
 		self.datalist = datalist
+		print(mode, self.datalist)
 
 	def __len__(self):
 		return int(len(self.datalist))
