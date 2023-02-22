@@ -16,7 +16,7 @@ class load_data(torch.utils.data.Dataset):
 
 		random.shuffle(datalist)
 
-		if len(datalist > 6000):
+		if len(datalist) > 6000:
 			datalist = random.sample(list(datalist), 6000)
 
 
