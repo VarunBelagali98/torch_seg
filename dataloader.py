@@ -21,7 +21,7 @@ class load_data(torch.utils.data.Dataset):
 
 
 		if mode == 0:
-			datalist = datalist[:-500]
+			datalist = datalist[:len(datalist)-500]
 		if mode == 1:
 			datalist = datalist[-500:]
 		
