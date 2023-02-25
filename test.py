@@ -15,19 +15,19 @@ use_cuda = torch.cuda.is_available()
 
 parser = argparse.ArgumentParser(description='Code to train model')
 
-parser.add_argument("--fold", help="fold index [1-5]", required=True, type=int)
+parser.add_argument("--image_path", help="fold index [1-5]", required=True, type=str)
 
 parser.add_argument("--batch_size", help="batch size", default=16, type=int)
 
 parser.add_argument('--root_data', help='data folder path', default="../training/training/training/", type=str)
 
-parser.add_argument('--fold_files', help='fold files path', default="../fold_files/annfiles_fold", type=str)
-
-parser.add_argument("--weight_root", help="weight folder", default="/content//gdrive/MyDrive/colab-data/weights/", type=str)
-
-parser.add_argument("--eval_root", help="results folder", default="/content//gdrive/MyDrive/colab-data/Dice/", type=str)
+parser.add_argument("--weight_root", help="weight folder", default="/content//gdrive/MyDrive/G/save/", type=str)
 
 parser.add_argument("--model_name", help="name of the weight file", required=True, type=str)
+
+parser.add_argument("--eval_root", help="results folder", default="/content//gdrive/MyDrive/G/res/", type=str)
+
+parser.add_argument("--eval_name", help="results folder", required=True, type=str)
 
 args = parser.parse_args()
 
@@ -82,17 +82,16 @@ def save_samples(test_data_loader, device, model):
 			return
 
 if __name__ == "__main__":
-	fold = args.fold
 	model_name = args.model_name
 	batch_size = args.batch_size
 	TRAINING_PATH = args.root_data
-	FOLD_PATH = args.fold_files
 	ROOT_WEIGHTPATH = args.weight_root
-	EVAL_PATH = args.eval_root
+	image_path = args.image_path
+	EVAL_PATH = args.eval_root + args.eval_name
 	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
-	test_dataset = load_data(fold, 0, TRAINING_PATH=TRAINING_PATH, FOLD_PATH=FOLD_PATH)
+	test_dataset = load_data(image_path, TRAINING_PATH=TRAINING_PATH, mode=2)
 
 	test_data_loader = data_utils.DataLoader(
 		test_dataset, batch_size=batch_size)
@@ -108,7 +107,7 @@ if __name__ == "__main__":
 
 	# Test!
 	res = test(test_data_loader, device, model)
-	with open(EVAL_PATH+ model_name +'_test_dice.txt', 'w') as f_test:
+	with open(EVAL_PATH+ '_test_dice.txt', 'w') as f_test:
 		for item in res:
 			f_test.write("%s\n" % item)
 
