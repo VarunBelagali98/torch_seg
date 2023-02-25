@@ -99,7 +99,7 @@ if __name__ == "__main__":
 	device = torch.device("cuda" if use_cuda else "cpu")
 
 	# Model
-	model = ResUNet().to(device)
+	model = UNet().to(device)
 	summary(model, (1, 224, 224))
 
 	# Load weights
