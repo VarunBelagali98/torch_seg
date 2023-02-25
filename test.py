@@ -9,7 +9,7 @@ import argparse
 import numpy as np 
 import cv2
 import os
-from models.ResUnet import ResUNet
+from models.unet import UNet
 
 use_cuda = torch.cuda.is_available()
 
