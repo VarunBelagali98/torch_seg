@@ -64,8 +64,14 @@ class load_data(torch.utils.data.Dataset):
 			path = cam_file_path + camera_map[cam] + "_train" + ".txt"
 			cam_datalist = list(np.genfromtxt(path,dtype='str'))
 			random.shuffle(cam_datalist)
-			train_datalist.extend(cam_datalist[:len(cam_datalist)-500])
-			val_datalist.extend(cam_datalist[-500:])
+			if len(cam_datalist) >= 1000:
+				train_datalist.extend(cam_datalist[:len(cam_datalist)-500])
+				val_datalist.extend(cam_datalist[-500:])
+			else:
+				val_len = int(0.2 * len(cam_datalist))
+				train_datalist.extend(cam_datalist[:len(cam_datalist)-val_len])
+				val_datalist.extend(cam_datalist[-val_len:])
+
 
 			path = cam_file_path + camera_map[cam] + "_test" + ".txt"
 			cam_datalist = list(np.genfromtxt(path,dtype='str'))
