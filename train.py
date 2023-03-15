@@ -12,7 +12,9 @@ use_cuda = torch.cuda.is_available()
 
 parser = argparse.ArgumentParser(description='Code to train model')
 
-parser.add_argument("--image_path", help="fold index [1-5]", required=True, type=str)
+parser.add_argument("--cams", help="fold index [1-5]", required=True, type=str)
+
+parser.add_argument("--cam_data_path", help="fold index [1-5]", required=True, type=str)
 
 parser.add_argument("--batch_size", help="batch size", default=16, type=int)
 
@@ -100,13 +102,14 @@ if __name__ == "__main__":
 	batch_size = args.batch_size
 	TRAINING_PATH = args.root_data
 	ROOT_WEIGHTPATH = args.weight_root
-	image_path = args.image_path
+	cam_data_path = args.cam_data_path
+	cams = args.cams
 	
 	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
-	train_dataset = load_data(image_path, TRAINING_PATH=TRAINING_PATH,  mode=0)
-	val_dataset = load_data(image_path, TRAINING_PATH=TRAINING_PATH, mode=1)
+	train_dataset = load_data(cams, cam_data_path, TRAINING_PATH=TRAINING_PATH,  mode=0)
+	val_dataset = load_data(cams, cam_data_path, TRAINING_PATH=TRAINING_PATH, mode=1)
 
 	train_data_loader = data_utils.DataLoader(
 		train_dataset, batch_size=batch_size, shuffle=True)
