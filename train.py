@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(description='Code to train model')
 
 parser.add_argument("--cams", help="fold index [1-5]", required=True, type=str)
 
-parser.add_argument("--cam_data_path", help="fold index [1-5]", required=True, type=str)
+parser.add_argument("--cam_data_path", help="fold index [1-5]", default="./config/cam/", type=str)
 
 parser.add_argument("--batch_size", help="batch size", default=16, type=int)
 

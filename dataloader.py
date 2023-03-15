@@ -46,11 +46,11 @@ class load_data(torch.utils.data.Dataset):
 	def get_datalist(self, cams, cam_file_path, mode=0):
 
 		camera_map = {
-			1: "KayPentaxHSV9710(Photron)",
-			2: "Phantomv210",
-			3: "HERS5562EndocamWolf",
-			4: "KayPentaxHSV9700(Photron)",
-			5: "FASTCAMMiniAX100type540K-C-16GB"
+			'1': "KayPentaxHSV9710(Photron)",
+			'2': "Phantomv210",
+			'3': "HERS5562EndocamWolf",
+			'4': "KayPentaxHSV9700(Photron)",
+			'5': "FASTCAMMiniAX100type540K-C-16GB"
 		}
 
 		cams = cams.split(",")
