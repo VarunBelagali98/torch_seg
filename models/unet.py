@@ -10,7 +10,7 @@ class UNet(nn.Module):
 		super(UNet, self).__init__()
 
 		self.encoder_blocks = nn.ModuleList([
-			nn.Sequential(torch.nn.BatchNorm2d(1),
+			nn.Sequential( #torch.nn.BatchNorm2d(1),
 			Conv2d(1, 64, kernel_size=3),
 			Conv2d(64, 64, kernel_size=3),),
 			

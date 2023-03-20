@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
 	# Model
 	model = UNet().to(device)
-	summary(model, (1, 224, 224))
+	#summary(model, (1, 224, 224))
 	print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
 	optimizer = torch.optim.Adam(model.parameters())
