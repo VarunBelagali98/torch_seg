@@ -31,6 +31,9 @@ parser.add_argument("--eval_root", help="results folder", default="/content//gdr
 
 parser.add_argument("--eval_name", help="results folder", required=True, type=str)
 
+parser.add_argument("--mode", help="train 0, val 1, test 2", default=2, type=int)
+
+
 args = parser.parse_args()
 
 def test(test_data_loader, device, model):
@@ -91,12 +94,13 @@ if __name__ == "__main__":
 
 	cam_data_path = args.cam_data_path
 	cams = args.cams
+	mode = args.mode
 
 	EVAL_PATH = args.eval_root + args.eval_name
 	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
-	test_dataset = load_data(cams, cam_data_path, TRAINING_PATH=TRAINING_PATH, mode=2)
+	test_dataset = load_data(cams, cam_data_path, TRAINING_PATH=TRAINING_PATH, mode=mode)
 
 	test_data_loader = data_utils.DataLoader(
 		test_dataset, batch_size=batch_size)
