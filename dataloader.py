@@ -16,6 +16,7 @@ class load_data(torch.utils.data.Dataset):
 		print(len(datalist))
 		self.datalist = datalist
 		print(mode, self.datalist)
+		self.mode = mode
 		if train_cams == None:
 			train_cams =cams
 		self.mean = norm_dict[train_cams]["mean"]
