@@ -108,8 +108,8 @@ if __name__ == "__main__":
 	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
-	train_dataset = load_data(cams, cam_data_path, TRAINING_PATH=TRAINING_PATH,  mode=0)
-	val_dataset = load_data(cams, cam_data_path, TRAINING_PATH=TRAINING_PATH, mode=1)
+	train_dataset = load_data(cams=cams, cam_data_path=cam_data_path, TRAINING_PATH=TRAINING_PATH,  mode=0)
+	val_dataset = load_data(cams=cams, cam_data_path=cam_data_path, TRAINING_PATH=TRAINING_PATH, mode=1)
 
 	train_data_loader = data_utils.DataLoader(
 		train_dataset, batch_size=batch_size, shuffle=True)
@@ -124,7 +124,7 @@ if __name__ == "__main__":
 	#summary(model, (1, 224, 224))
 	print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
-	optimizer = torch.optim.Adam(model.parameters())
+	optimizer = torch.optim.AdamW(model.parameters())
 
 	# Train!
 	train(device, model, train_data_loader, val_data_loader, optimizer, nepochs=100, WEIGTH_PATH=WEIGTH_PATH)

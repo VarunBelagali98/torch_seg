@@ -5,9 +5,10 @@ import cv2
 import numpy as np
 import random
 import math
+from config.norm import norm_dict
 
 class load_data(torch.utils.data.Dataset):
-	def __init__(self,cams, cam_file_path,TRAINING_PATH, mode=0):
+	def __init__(self,cams, cam_file_path,TRAINING_PATH, mode=0, train_cams=None):
 		random.seed(0)
 		self.TRAINING_PATH = TRAINING_PATH
 
@@ -15,6 +16,12 @@ class load_data(torch.utils.data.Dataset):
 		print(len(datalist))
 		self.datalist = datalist
 		print(mode, self.datalist)
+		if train_cams == None:
+			train_cams =cams
+		self.mean = norm_dict[train_cams]["mean"]
+		self.std = norm_dict[train_cams]["std"]
+
+		self.intensity_scales = np.array([0.5, 0.8, 1, 1.2, 1.5])
 
 	def __len__(self):
 		return int(len(self.datalist))
@@ -28,9 +35,14 @@ class load_data(torch.utils.data.Dataset):
 
 		fname = self.TRAINING_PATH + str(self.datalist[idx]) + '_seg.png'
 		img_g = cv2.imread(fname)
-		img_g = cv2.resize(img_g, ( s , s )) 
+		img_g = cv2.resize(img_g, ( s , s ))
+
+		if self.mode == 0 or self.mode == 1:
+			scale = np.random.choice(a=self.intensity_scales, size=1, p=[0.1, 0.1, 0.6, 0.1, 0.1])[0]
+			img_in = img_in * scale
+			img_in = np.clip(img_in, a_min=0, a_max=255) 
 			
-		img =img_in[:,:,np.newaxis]/255.0
+		img = (img_in[:,:,np.newaxis] - self.mean) / self.std
 		#pos = positive_mask[:,:,:]
 		#neg = negative_mask[:,:,:]
 		img_ann = img_g[:,:,1,np.newaxis]/255.0
