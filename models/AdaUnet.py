@@ -88,7 +88,6 @@ class AdaUNet(nn.Module):
 				print(feats[-1].size())
 				raise e
 
-
 		output = self.output_block(x)
 		return output
 

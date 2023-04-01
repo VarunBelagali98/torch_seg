@@ -114,7 +114,7 @@ if __name__ == "__main__":
 	# Model
 	Ada_model = AdaNet_v1()
 	model = AdaUNet(Ada_model).to(device)
-	#summary(model, (1, 224, 224))
+	summary(model, (1, 224, 224))
 
 	# Load weights
 	model.load_state_dict(torch.load(WEIGTH_PATH))
