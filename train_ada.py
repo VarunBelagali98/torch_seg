@@ -27,6 +27,8 @@ parser.add_argument("--model_name", help="name of the weight file", required=Tru
 
 parser.add_argument("--pretrain_weight", help="name of the weight file", required=True, type=str)
 
+parser.add_argument("--train_cams", help="fold index [1-5]", default=None, type=str)
+
 args = parser.parse_args()
 
 def train(device, model, train_data_loader, val_data_loader, optimizer, nepochs, WEIGTH_PATH):
@@ -111,8 +113,8 @@ if __name__ == "__main__":
 	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
-	train_dataset = load_data(cams=cams, cam_file_path=cam_data_path, TRAINING_PATH=TRAINING_PATH,  mode=0)
-	val_dataset = load_data(cams=cams, cam_file_path=cam_data_path, TRAINING_PATH=TRAINING_PATH, mode=1)
+	train_dataset = load_data(cams=cams, cam_file_path=cam_data_path, TRAINING_PATH=TRAINING_PATH,  mode=0, train_cams=args.train_cams)
+	val_dataset = load_data(cams=cams, cam_file_path=cam_data_path, TRAINING_PATH=TRAINING_PATH, mode=1, train_cams=args.train_cams)
 
 	train_data_loader = data_utils.DataLoader(
 		train_dataset, batch_size=batch_size, shuffle=True)
