@@ -127,6 +127,8 @@ if __name__ == "__main__":
 	model = AdaUNet(Ada_model).to(device)
 	msg = model.load_state_dict(torch.load(ROOT_WEIGHTPATH+args.pretrain_weight+".pth"),  strict=False)
 	print(f'Loading messages: \n {msg}')
+	for p in model.parameters():
+		print(p.name)
 
 	#summary(model, (1, 224, 224))
 	#print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
