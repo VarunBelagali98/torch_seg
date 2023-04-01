@@ -125,7 +125,7 @@ if __name__ == "__main__":
 	# Model
 	Ada_model = AdaNet_v1()
 	model = AdaUNet(Ada_model).to(device)
-	msg = model.load_state_dict(torch.load(WEIGTH_PATH+args.pretrain_weight+".pth"),  strict=False)
+	msg = model.load_state_dict(torch.load(ROOT_WEIGHTPATH+args.pretrain_weight+".pth"),  strict=False)
 	print(f'Loading messages: \n {msg}')
 
 	#summary(model, (1, 224, 224))
