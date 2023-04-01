@@ -9,7 +9,8 @@ import argparse
 import numpy as np 
 import cv2
 import os
-from models.unet import UNet
+from models.AdaNet import AdaNet_v1
+from models.AdaUnet import AdaUNet
 
 use_cuda = torch.cuda.is_available()
 
@@ -25,7 +26,7 @@ parser.add_argument("--batch_size", help="batch size", default=16, type=int)
 
 parser.add_argument('--root_data', help='data folder path', default="../training/training/training/", type=str)
 
-parser.add_argument("--pretrain_root", help="weight folder", default="/content//gdrive/MyDrive/G/save/", type=str)
+parser.add_argument("--weight_root", help="weight folder", default="/content//gdrive/MyDrive/G/save/", type=str)
 
 parser.add_argument("--model_name", help="name of the weight file", required=True, type=str)
 
@@ -111,7 +112,8 @@ if __name__ == "__main__":
 	device = torch.device("cuda" if use_cuda else "cpu")
 
 	# Model
-	model = UNet().to(device)
+	Ada_model = AdaNet_v1()
+	model = AdaUNet(Ada_model).to(device)
 	#summary(model, (1, 224, 224))
 
 	# Load weights

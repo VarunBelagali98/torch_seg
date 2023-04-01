@@ -5,9 +5,11 @@ import math
 from .conv import Conv2dTranspose, Conv2d
 import numpy as np
 
-class UNet(nn.Module):
-	def __init__(self):
-		super(UNet, self).__init__()
+class AdaUNet(nn.Module):
+	def __init__(self, AdaNet=None):
+		super(AdaUNet, self).__init__()
+
+		self.AdaNet = AdaNet
 
 		self.encoder_blocks = nn.ModuleList([
 			nn.Sequential( #torch.nn.BatchNorm2d(1),
@@ -58,11 +60,19 @@ class UNet(nn.Module):
 
 		self.output_block = nn.Sequential(nn.Conv2d(64, 1, kernel_size=3, stride=1, padding="same"),
 			nn.BatchNorm2d(1),
-			nn.Sigmoid()) 
+			nn.Sigmoid())
 
-	def forward(self, x):
+	def forward(self, X):
+		if self.AdaNet != None:
+			X =  self.AdaNet(X)
+			with torch.no_grad():
+				return self.forward_seg(X)
+		else:
+			return self.forward_seg(X)
+
+	def forward_seg(self, x):
 		feats = []
-	
+
 		for f in self.encoder_blocks:
 			x = f(x)
 			feats.append(x)
@@ -82,12 +92,8 @@ class UNet(nn.Module):
 		output = self.output_block(x)
 		return output
 
-	def dice_loss(self, X=None, Y=None, freeze=False):
-		if freeze == True:
-			with torch.no_grad():
-				pred = self.forward(X)
-		else:
-			pred = self.forward(X)
+	def dice_loss(self, X=None, Y=None):
+		pred = self.forward(X)
 		smooth = 1.
 		y_true_f = torch.reshape(Y, (-1,))
 		y_pred_f = torch.reshape(pred, (-1,))
