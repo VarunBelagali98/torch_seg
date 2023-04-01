@@ -128,10 +128,11 @@ if __name__ == "__main__":
 	msg = model.load_state_dict(torch.load(ROOT_WEIGHTPATH+args.pretrain_weight+".pth"),  strict=False)
 	print(f'Loading messages: \n {msg}')
 	for name, param in model.named_parameters():
-		print(name)
+		if name.startswith('encoder') or name.startswith('decoder') or name.startswith('output'):
+			param.requires_grad = False
 
 	#summary(model, (1, 224, 224))
-	#print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
+	print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
 	optimizer = torch.optim.AdamW(model.parameters())
 

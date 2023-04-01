@@ -63,12 +63,8 @@ class AdaUNet(nn.Module):
 			nn.Sigmoid())
 
 	def forward(self, X):
-		if self.AdaNet != None:
-			X =  self.AdaNet(X)
-			with torch.no_grad():
-				return self.forward_seg(X)
-		else:
-			return self.forward_seg(X)
+		X =  self.AdaNet(X)
+		return self.forward_seg(X)
 
 	def forward_seg(self, x):
 		feats = []
