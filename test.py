@@ -10,6 +10,8 @@ import numpy as np
 import cv2
 import os
 from models.unet import UNet
+from models.AdaNet import AdaNet_v1
+from models.AdaUnet import AdaUNet
 
 use_cuda = torch.cuda.is_available()
 
@@ -110,8 +112,9 @@ if __name__ == "__main__":
 
 	device = torch.device("cuda" if use_cuda else "cpu")
 
-	# Model
-	model = UNet().to(device)
+	Ada_model = UNet()
+	base_model = UNet()
+	model = AdaUNet(Ada_model, base_model).to(device)
 	#summary(model, (1, 224, 224))
 
 	# Load weights

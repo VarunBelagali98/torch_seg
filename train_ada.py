@@ -126,7 +126,7 @@ if __name__ == "__main__":
 	device = torch.device("cuda" if use_cuda else "cpu")
 
 	# Model
-	Ada_model = AdaNet_v1()
+	Ada_model = UNet()
 	base_model = UNet()
 	model = AdaUNet(Ada_model, base_model).to(device)
 	
@@ -138,7 +138,7 @@ if __name__ == "__main__":
 
 	msg = model.load_state_dict(new_state_dict,  strict=False)
 	print(f'Loading messages: \n {msg}')
-	
+
 	for name, param in model.named_parameters():
 		if name.startswith("base_mode"):
 			param.requires_grad = False
