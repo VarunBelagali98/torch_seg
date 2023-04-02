@@ -12,3 +12,4 @@ class AdaNet_v1(nn.Module):
     def forward(self, x):
         out = self.conv_block(x)
         return out
+

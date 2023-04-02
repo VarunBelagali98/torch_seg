@@ -6,6 +6,7 @@ from torch.utils import data as data_utils
 from tqdm import tqdm
 from torchsummary import summary
 import argparse
+from models.unet import UNet
 from models.AdaUnet import AdaUNet
 from models.AdaNet import AdaNet_v1
 
@@ -126,11 +127,20 @@ if __name__ == "__main__":
 
 	# Model
 	Ada_model = AdaNet_v1()
-	model = AdaUNet(Ada_model).to(device)
-	msg = model.load_state_dict(torch.load(ROOT_WEIGHTPATH+args.pretrain_weight+".pth"),  strict=False)
+	base_model = UNet()
+	model = AdaUNet(Ada_model, base_model).to(device)
+	
+	state_dict = torch.load(ROOT_WEIGHTPATH+args.pretrain_weight+".pth")
+	new_state_dict = {}
+	for key in list(state_dict.keys()):
+		new_state_dict["base_model."+key] = state_dict[key]
+		del state_dict[key]
+
+	msg = model.load_state_dict(new_state_dict,  strict=False)
 	print(f'Loading messages: \n {msg}')
+	
 	for name, param in model.named_parameters():
-		if name.startswith('encoder') or name.startswith('decoder') or name.startswith('output'):
+		if name.startswith("base_mode"):
 			param.requires_grad = False
 
 	#summary(model, (1, 224, 224))
