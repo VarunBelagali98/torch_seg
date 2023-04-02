@@ -6,86 +6,17 @@ from .conv import Conv2dTranspose, Conv2d
 import numpy as np
 
 class AdaUNet(nn.Module):
-	def __init__(self, AdaNet=None):
+	def __init__(self, AdaNet=None, base_model=None):
 		super(AdaUNet, self).__init__()
 
-		self.AdaNet = AdaNet
+		self.adapter = AdaNet
+		self.base_model = base_model 
 
-		self.encoder_blocks = nn.ModuleList([
-			nn.Sequential( #torch.nn.BatchNorm2d(1),
-			Conv2d(1, 64, kernel_size=3),
-			Conv2d(64, 64, kernel_size=3),),
-			
-			nn.Sequential(nn.MaxPool2d(2, stride=2),
-			Conv2d(64, 128, kernel_size=3),
-			Conv2d(128, 128, kernel_size=3)),
-
-			nn.Sequential(nn.MaxPool2d(2, stride=2),
-			Conv2d(128, 256, kernel_size=3),
-			Conv2d(256, 256, kernel_size=3)),
-
-			nn.Sequential(nn.MaxPool2d(2, stride=2),
-			Conv2d(256, 512, kernel_size=3),
-			Conv2d(512, 512, kernel_size=3)),
-
-			nn.Sequential(nn.MaxPool2d(2, stride=2),
-			Conv2d(512, 1024, kernel_size=3)),
-		])
-
-
-		self.decoder_blocks = nn.ModuleList([
-			nn.Sequential(Conv2d(1024, 512, kernel_size=3),
-			nn.Upsample( scale_factor=(2,2))
-			),
-
-			nn.Sequential(Conv2d(1024, 512, kernel_size=3),
-			Conv2d(512, 256, kernel_size=3),
-			nn.Upsample(scale_factor=(2,2))
-			),
-
-			nn.Sequential(Conv2d(512, 256, kernel_size=3),
-			Conv2d(256, 128, kernel_size=3),
-			nn.Upsample(scale_factor=(2,2))#, scale_factor=(2,2))
-			),
-
-			nn.Sequential(Conv2d(256, 128, kernel_size=3),
-			Conv2d(128, 64, kernel_size=3),
-			nn.Upsample(scale_factor=(2,2))#, scale_factor=(2,2))
-			),
-
-			nn.Sequential(Conv2d(128, 64, kernel_size=3),
-			Conv2d(64, 64, kernel_size=3),
-			)
-			])
-
-		self.output_block = nn.Sequential(nn.Conv2d(64, 1, kernel_size=3, stride=1, padding="same"),
-			nn.BatchNorm2d(1),
-			nn.Sigmoid())
 
 	def forward(self, X):
-		X =  self.AdaNet(X)
-		return self.forward_seg(X)
-
-	def forward_seg(self, x):
-		feats = []
-
-		for f in self.encoder_blocks:
-			x = f(x)
-			feats.append(x)
-		feats.pop()
-		for f in self.decoder_blocks:
-			x = f(x)
-			try:
-				if len(feats) > 0:
-					x = torch.cat((x, feats[-1]), dim=1)
-					feats.pop()
-			except Exception as e:
-				print(x.size())
-				print(feats[-1].size())
-				raise e
-
-		output = self.output_block(x)
-		return output
+		X =  self.adapter(X)
+		X = self.base_model(X)
+		return X
 
 	def dice_loss(self, X=None, Y=None):
 		pred = self.forward(X)
