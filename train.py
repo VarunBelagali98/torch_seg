@@ -24,6 +24,8 @@ parser.add_argument("--weight_root", help="weight folder", default="/content//gd
 
 parser.add_argument("--model_name", help="name of the weight file", required=True, type=str)
 
+parser.add_argument("--use_scale", help="name of the weight file", default=1, type=int)
+
 args = parser.parse_args()
 
 def train(device, model, trainloader, valloader, optimizer, nepochs, WEIGTH_PATH):
@@ -104,12 +106,13 @@ if __name__ == "__main__":
 	ROOT_WEIGHTPATH = args.weight_root
 	cam_data_path = args.cam_data_path
 	cams = args.cams
+	use_scale = args.use_scale
 	
 	WEIGTH_PATH = ROOT_WEIGHTPATH + model_name + ".pth"
 
 	# Dataset and Dataloader setup
-	train_dataset = load_data(cams=cams, cam_file_path=cam_data_path, TRAINING_PATH=TRAINING_PATH,  mode=0)
-	val_dataset = load_data(cams=cams, cam_file_path=cam_data_path, TRAINING_PATH=TRAINING_PATH, mode=1)
+	train_dataset = load_data(cams=cams, cam_file_path=cam_data_path, TRAINING_PATH=TRAINING_PATH,  mode=0, use_scale=use_scale)
+	val_dataset = load_data(cams=cams, cam_file_path=cam_data_path, TRAINING_PATH=TRAINING_PATH, mode=1, use_scale=use_scale)
 
 	train_data_loader = data_utils.DataLoader(
 		train_dataset, batch_size=batch_size, shuffle=True)
@@ -120,7 +123,7 @@ if __name__ == "__main__":
 	device = torch.device("cuda" if use_cuda else "cpu")
 
 	# Model
-	model = UNet().to(device)
+	model = UNet().to(device) 
 	#summary(model, (1, 224, 224))
 	print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
