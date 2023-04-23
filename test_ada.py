@@ -71,19 +71,19 @@ def save_samples(test_data_loader, device, model):
 		inputs, gt = data[0], data[1]
 		inputs = inputs.to(device)
 
-		pred = model.forward(inputs)
+		pred = model.adapter_out(inputs)
 
 		inputs = inputs.cpu().detach().numpy()
 		pred = pred.cpu().detach().numpy()
-		pred = pred > 0.5
-		pred = pred.astype(int)
+		#pred = pred > 0.5
+		#pred = pred.astype(int)
 
 		for i in range(inputs.shape[0]):
 			img = inputs[i, 0, :, :] * 255
 			img = img.astype(int)
 			seg = pred[i, 0, :, :] * 255
 			cv2.imwrite('./samples/'+str(count)+".png", img)
-			cv2.imwrite('./samples/'+str(count)+"_seg.png", seg)
+			cv2.imwrite('./samples/'+str(count)+"_ada.png", seg)
 			count = count + 1
 		
 		if count > 100:
