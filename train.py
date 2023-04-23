@@ -26,6 +26,7 @@ parser.add_argument("--model_name", help="name of the weight file", required=Tru
 
 parser.add_argument("--use_scale", help="name of the weight file", default=1, type=int)
 
+parser.add_argument("--pretrain_weight", help="name of the weight file", default="", type=str)
 args = parser.parse_args()
 
 def train(device, model, trainloader, valloader, optimizer, nepochs, WEIGTH_PATH):
@@ -122,8 +123,14 @@ if __name__ == "__main__":
 
 	device = torch.device("cuda" if use_cuda else "cpu")
 
+	model = UNet().to(device)
+
+	if args.pretrain_weight != "":
+		state_dict = torch.load(ROOT_WEIGHTPATH+args.pretrain_weight+".pth")
+		msg = model.load_state_dict(state_dict,  strict=False)
+		print(f'Loading messages: \n {msg}')
+
 	# Model
-	model = UNet().to(device) 
 	#summary(model, (1, 224, 224))
 	print('total trainable params {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
