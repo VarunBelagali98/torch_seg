@@ -18,6 +18,10 @@ class AdaUNet(nn.Module):
 		X = self.base_model(X)
 		return X
 
+	def adapter_out(self, x):
+		x = self.adapter(x)
+		return x
+
 	def dice_loss(self, X=None, Y=None):
 		pred = self.forward(X)
 		smooth = 1.

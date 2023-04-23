@@ -137,4 +137,4 @@ if __name__ == "__main__":
 	optimizer = torch.optim.AdamW(model.parameters())
 
 	# Train!
-	train(device, model, train_data_loader, val_data_loader, optimizer, nepochs=100, WEIGTH_PATH=WEIGTH_PATH)
+	train(device, model, train_data_loader, val_data_loader, optimizer, nepochs=500, WEIGTH_PATH=WEIGTH_PATH)
